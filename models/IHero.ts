@@ -12,7 +12,7 @@ export interface IHero {
 
 export class Hero implements IHero {
 
-  constructor(public name: string, public minDice: number, public maxDice: number, public initialUses, public uses: number, public selected: Boolean, public active: Boolean) {
+  constructor(public name: string, public minDice: number, public maxDice: number, public initialUses, public uses: number, public selected: Boolean, public active: Boolean, public pic:string) {
     this.uses = initialUses;
     this.selected = false;
   }
@@ -44,7 +44,7 @@ export interface IVillain {
 
 export class Villain implements IVillain {
 
-  constructor(public name: string, public hitpoints: number, public selected: Boolean, public active: Boolean) {}
+  constructor(public name: string, public hitpoints: number, public selected: Boolean, public active: Boolean, public pic:string) {}
 
   damage(amount: number): void {
     this.hitpoints -= Math.abs(amount);

@@ -20,6 +20,7 @@ export const HeroComponent: React.FC<HeroProps> = (props) => {
           onClick={() => props.onClick(hero.name)}
              
     >
+      <img src={hero.pic} />
       <h4>{hero.name}</h4>
       <p>Dice: {hero.minDice} - {hero.maxDice}</p>
       <p>Uses Left: {hero.uses}</p>

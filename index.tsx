@@ -13,6 +13,7 @@ import { Villains } from './components/Villain';
 import * as _ from 'lodash';
 import api from './services/api';
 import { Button } from 'react-bootstrap';
+import { IPicName } from './models/IResponses';
 
 export const useObservable = () => {
   const subj = new Subject<boolean>();
@@ -47,6 +48,7 @@ const App: React.FC<AppProps> = (props) => {
   const [rollBtnDisabled, setRollBtnDisabled] = useState<Boolean>(true);
   const [currentRoll, setCurrentRoll] = useState<number>(null);
   const [attackDisp, setAttackDisp] = useState<string>('No attacks played');
+  const [heroPicList, setHeroPicList] = useState<IPicNames[]>([]);
  
   const getHeroes = <Hero,> (url: string): Observable<Hero[]> => {
     return api.get<Hero[]>(url)
@@ -68,39 +70,65 @@ const App: React.FC<AppProps> = (props) => {
     e.currentTarget.disabled = true;
     let villains: Villain[] = [];
 
-    getData('villains').subscribe((resp => { 
-      let villains:Villain[] = [];
-      let villainsData:Villain[] = resp as Villain[];
-      let namesUsedIndexes: number[] = [];
 
-      for(let i = 0; i < 3; i++) {
-        let nameIndex = -1;
-        while (nameIndex < 0 || namesUsedIndexes.findIndex((index)=> index == nameIndex) > -1) {
-          nameIndex = Math.floor(Math.random() * villainsData.length);
+    getData('villain-pics').subscribe((resp => {
+      let heroPics:IPicName[] = [];
+      let data:IPicName[] = resp as IPicName[];
+      let heroPicBaseUrl = 'https://raw.githubusercontent.com/ubkychin/react-ts-srymy8/master/assets/villains/';
+
+      // Get villain data
+      getData('villains').subscribe((resp => { 
+        let villains:Villain[] = [];
+        let villainsData:Villain[] = resp as Villain[];
+        let namesUsedIndexes: number[] = [];
+
+        for(let i = 0; i < 3; i++) {
+          let nameIndex = -1;
+          while (nameIndex < 0 || namesUsedIndexes.findIndex((index)=> index == nameIndex) > -1) {
+            nameIndex = Math.floor(Math.random() * villainsData.length);
+          }
+          namesUsedIndexes.push(nameIndex);
+          let picName = heroPicBaseUrl+data[Math.floor(Math.random() * data.length)].filename;
+          let hitPoints = Math.floor(Math.random() * 10) + 1;
+          villains.push(new Villain(villainsData[nameIndex].name, hitPoints, false, true, picName));
         }
-        namesUsedIndexes.push(nameIndex);
-        let hitPoints = Math.floor(Math.random() * 10) + 1;
-        villains.push(new Villain(villainsData[nameIndex].name, hitPoints, false, true));
-      }
 
 
-      let updatedGame = _.cloneDeep(game);
-      updatedGame.villains = villains;
-      setGame(updatedGame);
+        let updatedGame = _.cloneDeep(game);
+        updatedGame.villains = villains;
+        setGame(updatedGame);
+
+      }));
+
+    }));
+    
+
+    // Get hero image names
+    getData('hero-pics').subscribe((resp => {
+      let heroPics:IPicName[] = [];
+      let data:IPicName[] = resp as IPicName[];
+      let heroPicBaseUrl = 'https://raw.githubusercontent.com/ubkychin/react-ts-srymy8/master/assets/heroes/';
+
+      setHeroPicList(data);
+      console.log("data: ", data);
+
+      // Get hero data
+      getHeroes('heroes').subscribe((resp => {
+        setResponse(resp as Hero[]);
+        let newHeroes:Hero[] = [];
+        
+        for(let h of resp as Hero[]) {
+          let picName = heroPicBaseUrl+data[Math.floor(Math.random() * data.length)].filename;
+          newHeroes.push(new Hero(h.name, h.minDice, h.maxDice, h.initialUses, h.initialUses, false, true, picName));
+        }
+
+        setHeroes(newHeroes);
+        console.log("arst: ", data[0]);
+      }));
 
     }));
 
 
-    getHeroes('heroes').subscribe((resp => {
-      setResponse(resp as Hero[]);
-      let newHeroes:Hero[] = []
-      
-      for(let h of resp as Hero[]) {
-        newHeroes.push(new Hero(h.name, h.minDice, h.maxDice, h.initialUses, h.initialUses, false, true));
-      }
-
-      setHeroes(newHeroes);
-    }));
 
   }
 
@@ -240,7 +268,7 @@ const App: React.FC<AppProps> = (props) => {
       <br />
         { attackDisp }
         <br />
-        <Button id="roll-btn" Variant="Primary" onClick={()=> rollClickHandler()} disabled={rollBtnDisabled}>Roll</Button>
+        <Button id="roll-btn" variant="primary" onClick={()=> rollClickHandler()} disabled={rollBtnDisabled}>Roll</Button>
       </div>
       
     </div>

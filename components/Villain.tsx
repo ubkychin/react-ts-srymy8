@@ -18,6 +18,7 @@ export const VillainComponent: React.FC<VillainProps> = (props) => {
     <div  className={`villain-div ${villain.selected == true ? "selected" : ''} ${!villain.active ? 'disabled' : ''}`} 
           onClick={() => props.onClick(villain.name)}
     >
+      <img src={villain.pic} />
       <h4>{villain.name}</h4>
       <p>{villain.hitpoints}</p>
       <p>{villain.selected.toString()}</p>
