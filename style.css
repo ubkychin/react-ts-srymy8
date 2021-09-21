@@ -1,0 +1,39 @@
+h1, p {
+  font-family: Lato;
+}
+
+.heroes-div, .villains-div {
+  display: flex;
+  flex-direction: row;
+}
+
+.hero-div, .villain-div {
+  margin: 10px;
+  border: 1px solid;
+  padding: 5px;
+  min-width: 100px;
+}
+
+.hero-div:hover, .villain-div:hover {
+  opacity: 50%;
+  background-color: lightgray;
+}
+
+.selected {
+  opacity: 70%;
+  transform: scale(1.1);
+}
+
+.hero-div.selected {
+  background-color: green;
+}
+
+.villain-div.selected {
+  background-color: red;
+}
+
+.disabled {
+  pointer-events: none;
+  opacity: 50%;
+  background-color: darkgray;
+}
