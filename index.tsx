@@ -48,7 +48,9 @@ const App: React.FC<AppProps> = (props) => {
   const [rollBtnDisabled, setRollBtnDisabled] = useState<Boolean>(true);
   const [currentRoll, setCurrentRoll] = useState<number>(null);
   const [attackDisp, setAttackDisp] = useState<string>('No attacks played');
-  const [heroPicList, setHeroPicList] = useState<IPicNames[]>([]);
+  const [heroPicList, setHeroPicList] = useState<IPicName[]>([]);
+
+  let rickRolled = false;
  
   const getHeroes = <Hero,> (url: string): Observable<Hero[]> => {
     return api.get<Hero[]>(url)
@@ -230,8 +232,9 @@ const App: React.FC<AppProps> = (props) => {
   const rollClickHandler = () => {
     let updatedGame = _.cloneDeep(game);
     
-    if (updatedGame.selectedHero.name == 'Rick') {
+    if (updatedGame.selectedHero.name == 'Rick' && !rickRolled) {
       openInNewTab('https://rebrand.ly/r1ckr0l13r');
+      rickRolled = true;
     }
   
     let roll = heroes.find((hero) => hero.name == updatedGame.selectedHero.name).useHero();
@@ -253,6 +256,7 @@ const App: React.FC<AppProps> = (props) => {
 
   return (
     <div className="App">
+      <h5>Phase 1</h5>
       <button id="start-btn" onClick={(e) =>{ startBtnHandler(e) }}>Start</button>
       <div className="game-div">
       <h3>Selected Hero: {game.selectedHero ? game.selectedHero.name: ""} </h3>
